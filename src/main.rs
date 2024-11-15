@@ -1,22 +1,48 @@
+mod auth;
 mod config;
 mod controller;
 mod db;
-mod auth;
 mod exception;
+mod gitop;
 #[macro_use]
 mod dev;
+
+use std::{path::Path, process::exit};
 
 use crate::controller::config_controller;
 use actix_web::{error, web, App, HttpResponse, HttpServer};
 use config::*;
+use db::{get_env_var, HOOK_LOCAL_DIR};
 use dotenv::dotenv;
 use env_logger::Env;
+use gitop::{update_repo, write_current_git_info, Repo};
+use log::{error, info};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     dotenv().ok();
     env_logger::init_from_env(Env::default().default_filter_or("info"));
-    println!("Hook Api version: {}", env!("CARGO_PKG_VERSION"));
+    info!("Hook Api version: {}", env!("CARGO_PKG_VERSION"));
+
+    if std::env::args().nth(1) == Some("init".to_string()) {
+        info!("Hook Api Init mode Detected");
+        let dir = get_env_var(HOOK_LOCAL_DIR);
+        let dirc = dir.clone();
+        let repository = Repo::env();
+        let res = update_repo(dir, repository).await;
+        match res {
+            Ok(r) => {
+                info!("Hook Api Init mode Success: {:?}", r);
+                write_current_git_info(Path::new(&dirc)).expect("Error write commit info");
+                exit(0)
+            }
+            Err(e) => {
+                error!("Hook Api Init mode Failed: {:?}", e);
+                exit(1)
+            }
+        }
+    }
+
     let json_config = web::JsonConfig::default()
         .limit(1024)
         .error_handler(|err, _req| {

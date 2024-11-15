@@ -31,6 +31,10 @@ docker run -it --rm \
     localhost/webhook-git-updater:latest
 ```
 
+注意，应用支持作为 init-container 使用，只需要传入命令和参数 `/app/webhook-git-updater init` 即可，其检查更新后直接退出，而不是启动 Web 服务器。其将额外在根目录创建 GIT_COMMIT 文件，包含当前代码的提交信息，可用于容器自行实现不依赖 Git 的前提下进行 Webhook 触发和本地代码比对以确定是否要执行滚动更新 —— 比如直接让 ReadnessProbe 失效且超出限度并触发重新部署触发 init-container 代码更新并在旧负载不中断的前提下平滑升级。
+
+注意，对于文件的修改，如果仓库存在，此工具将强行覆盖并确保和仓库一致，如果不存在，更新时不受影响，但更新错误时重新拉取将导致文件夹被清空。对于配置文件，Kubernetes 环境推荐 ConfigMap 或 Secret 直接挂载为 Volume。
+
 ## License
 
 MIT

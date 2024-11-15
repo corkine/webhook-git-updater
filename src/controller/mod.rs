@@ -6,7 +6,7 @@ use url::Url;
 
 use crate::auth::validator;
 
-mod git;
+pub(crate) mod git;
 
 #[get("/")]
 async fn welcome() -> impl Responder {
