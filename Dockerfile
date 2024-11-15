@@ -6,7 +6,9 @@ ENV RUSTUP_UPDATE_ROOT=https://mirrors.ustc.edu.cn/rust-static/rustup
 RUN cargo build --release
 
 FROM debian:bookworm-slim
-RUN apt-get update && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get install -y libssl3 && \
+    rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /app
 
 COPY --from=builder /app/target/release/webhook-git-updater /app/

@@ -92,6 +92,7 @@ async fn update_repo(repo_path: String, r: Repo) -> Result<String, Box<dyn std::
 fn clone_repo(path: &Path, r: &Repo) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
     info!("Cloning repository...");
     let mut callbacks = RemoteCallbacks::new();
+    callbacks.certificate_check(|_,_| true);
     callbacks.credentials(|_url, _username_from_url, _allowed_types| {
         Cred::userpass_plaintext(&r.user, &r.pass)
     });
@@ -123,6 +124,7 @@ fn update_existing_repo(path: &Path, r: &Repo) -> Result<(), Box<dyn std::error:
 
     // 设置认证回调
     let mut callbacks = RemoteCallbacks::new();
+    callbacks.certificate_check(|_,_| true);
     callbacks.credentials(|_url, _username_from_url, _allowed_types| {
         Cred::userpass_plaintext(&r.user, &r.pass)
     });
