@@ -1,0 +1,29 @@
+[package]
+name = "webhook-git-updater"
+version = "0.0.1"
+edition = "2021"
+
+[dependencies]
+actix-web = { version = "4.9.0" }
+serde_json = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+futures = "0.3.30"
+env_logger = "0.11.5"
+# actix-files = "0.6.6"
+sqlx = { version = "0.8.2", features = ["chrono", "derive", "sqlite", "time", "runtime-tokio"] }
+# rusqlite = "0.32.1"
+thiserror = "1.0.63"
+chrono = { version = "0.4.38", features = ["serde"] }
+rand = "0.8"
+# ring = "0.17.8"
+data-encoding = "2.3"
+actix-web-httpauth = "0.8"
+# lazy_static = "1.4.0"
+actix-cors = "0.6"
+url = "2.2"
+base64 = "0.13"
+reqwest = { version = "0.11", default-features = false, features = ["multipart", "rustls-tls"] }
+dotenv = "0.15"
+log = "0.4"
+git2 = "0.13"
+tokio = { version = "1.0", features = ["full"] }
